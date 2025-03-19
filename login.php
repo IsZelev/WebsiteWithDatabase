@@ -6,12 +6,36 @@
         $password = htmlspecialchars($_POST['password']);
 
         $host = "localhost";
-        $dbname = "UserProvisioning";
+        $dbname = "loginphp";
         $user = "root";
         $pass = "";
         $permissionsList = "";
 
         //inserire pdo e verifica login
+        try
+        {
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+            if(password_verify($password, $username)) {
+            $sql = "SELECT password as pss FROM utente WHERE username = :usrname";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':usrname', $username);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $permissionsList = "Permessi associati a " . $username . ":\\n";
+
+            foreach ($row as $permesso)
+                $permissionsList .= "[" . $permesso['id_permesso'] . "] - " . $permesso['descrizione'] . "\\n";
+            }
+            else
+                $permissionsList = "Username o password errati!";
+
+        }catch (PDOException $e) {
+            die("Errore di connessione: " . $e->getMessage());
+           }
+           
 
     }
 ?>
@@ -23,7 +47,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TITOLO</title>
+    <title>SITO PHP</title>
 
     <style>
         .error { color: red; }
@@ -48,7 +72,7 @@
                     errorDiv.textContent = "Indirizzo la password.";
                     return false; // nessuna POST
                 }
-                return "VAdamo/index.php"; // POST verso il server alla stessa pagina PHP
+                return "login.php"; // POST verso il server alla stessa pagina PHP
             }
 
             // Associa la funzione di validazione al form
@@ -58,7 +82,7 @@
     </script>
 </head>
 <body>
-<h1>TITOLO DELLA PAGINA</h1>
+<h1>BENVENUTO NEL SITO</h1>
 <form method="POST" onsubmit="return validateForm()">
     <label for="username">Nome:</label><br>
     <input type="text" id="username" name="username" required><br><br>
