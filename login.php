@@ -6,13 +6,27 @@
         $password = htmlspecialchars($_POST['password']);
 
         $host = "localhost";
-        $dbname = "UserProvisioning";
+        $dbname = "logindb";
         $user = "root";
         $pass = "";
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        
         $permissionsList = "";
 
         //inserire pdo e verifica login
 
+        try
+        {
+
+            $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+            
+            echo "Connected to $dbname at $host successfully.";
+            
+            } catch (PDOException $pe) {
+            
+            die ("Could not connect to the database $dbname :" . $pe->getMessage());
+            
+        }
     }
 ?>
 
