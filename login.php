@@ -13,19 +13,27 @@
         
         $permissionsList = "";
 
-        //inserire pdo e verifica login
-
         try
         {
 
             $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
             
+            /*
+            $sql = "SELECT * FROM utente WHERE username = :username";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['email' => 'test@example.com']);
+
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user) {
+                echo "User found: " . $user['username'];
+            } else {
+                echo "No user found.";
+            }*/
             echo "Connected to $dbname at $host successfully.";
-            
-            } catch (PDOException $pe) {
-            
+        
+        } catch (PDOException $pe)
+        {
             die ("Could not connect to the database $dbname :" . $pe->getMessage());
-            
         }
     }
 ?>
@@ -44,32 +52,34 @@
         .success { color: green; }
     </style>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Funzione di validazione
-            function validateForm() {
-                const usernameInput = document.getElementById('username');
-                const username = usernameInput.value.trim();
-                const pswdInput = document.getElementById('password');
-                const pswd = pwdInput.value.trim();
-                const errorDiv = document.getElementById('client-errors');
-                errorDiv.textContent = ''; // Pulisce eventuali messaggi precedenti
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        function validateForm() {
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
+            const pswdInput = document.getElementById('password');
+            const pswd = pswdInput.value.trim();
+            const errorDiv = document.getElementById('client-errors');
+            errorDiv.textContent = ''; // Pulisce eventuali messaggi precedenti
 
-                if (!username) {
-                    errorDiv.textContent = "Inserire username.";
-                    return false; // nessuna POST
-                } else if (!pswd) {
-                    errorDiv.textContent = "Indirizzo la password.";
-                    return false; // nessuna POST
-                }
-                return "login.php"; // POST verso il server alla stessa pagina PHP
+            if (!username) {
+                errorDiv.textContent = "Inserire username.";
+                return false; // Blocca il submit
+            } 
+            
+            if (!pswd) {
+                errorDiv.textContent = "Inserire la password.";
+                return false; // Blocca il submit
             }
 
-            // Associa la funzione di validazione al form
-            const form = document.querySelector('form');
-            form.onsubmit = validateForm;
-        });
-    </script>
+            return true; // Permette l'invio del form
+        }
+
+        const form = document.querySelector('form');
+        form.onsubmit = validateForm;
+    });
+</script>
+
 </head>
 <body>
 <h1>BENVENUTO NEL SITO</h1>
